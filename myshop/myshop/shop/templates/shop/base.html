@@ -1,0 +1,214 @@
+
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  </head>
+  <style>
+    .btn-outline-danger:hover {
+      background-color: #dc3545;
+      color: white;
+      transition: 0.3s;
+    }
+  
+    .btn-outline-danger {
+      border-radius: 50%;
+      padding: 2px 6px;
+    }
+  
+    #cartDrawer::-webkit-scrollbar {
+      width: 5px;
+    }
+  
+    #cartDrawer::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 10px;
+    }
+  </style>
+  
+  <body>
+
+    <!----------------------------------------------------Navbar----------------------------------------------------------->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+      <div class="container d-flex align-items-center justify-content-between">
+    
+        <!-- Logo and Name -->
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+          <img src="{% static 'store/media/cartlogo.jpg' %}" alt="SwaDesiMart" style="width: 35px;">
+          <span class="fw-bold fs-4 text-success">Greencart</span>
+        </a>
+    
+        <!-- Search Bar -->
+        <form class="d-flex flex-fill mx-3">
+          <input class="form-control border-success" type="search" placeholder="Search for products" aria-label="Search">
+          <button class="btn btn-success ms-2 px-3" type="submit">Search</button>
+        </form>
+    
+        <!-- Icons (Login, Wishlist, Cart) -->
+        <ul class="navbar-nav flex-row gap-3 align-items-center">
+          <li class="nav-item position-relative">
+            <a class="nav-link" href="">
+              <img src="{% static 'store/media/account.png' %}" alt="account" style="width: 24px;">
+            </a>
+          </li>
+    
+          <li class="nav-item position-relative">
+            <a class="nav-link" href="{% url 'wishlist' %}">
+              <img src="{% static 'store/media/favicon.svg' %}" alt="Wishlist" style="width: 24px;">
+              <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill shadow-sm">1</span>
+            </a>
+          </li>
+    
+          <li class="nav-item position-relative">
+            <a class="nav-link" href="/">
+              <img src="{% static 'store/media/carticon.svg' %}" alt="Cart" style="width: 28px;">
+              <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill shadow-sm">2</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!----------------------------------------------------cart-control-------------------------------------------------------->
+    <!-- Toast Notification -->
+<div id="cartToast" class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-4" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">
+      ✅ Added to cart! <a href="#" class="text-white fw-bold ms-2" onclick="openCart()">View Cart</a>
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+  </div>
+</div>
+
+<!-- Sliding Cart Panel -->
+<div id="cartOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style="z-index:1049; display:none;" onclick="closeCart()"></div>
+
+<div id="cartDrawer" class="position-fixed top-0 end-0 bg-white shadow-lg p-4" style="width: 400px; height: 100vh; transform: translateX(100%); transition: transform 0.4s ease; z-index:1050;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0 fw-bold">🛒 Your Cart</h5>
+    <button class="btn-close" onclick="closeCart()"></button>
+  </div>
+  <hr>
+
+  <!-- Cart Item Example -->
+  <div id="cartItems">
+    <!-- Repeat this div for each item -->
+    <div class="d-flex align-items-start mb-4" id="item1">
+      <img src="https://via.placeholder.com/60" class="me-3 rounded" alt="product" style="width: 60px; height: 60px; object-fit: cover;">
+      <div class="flex-grow-1">
+        <div class="d-flex justify-content-between">
+          <h6 class="mb-1">Haldiram's Sev Bhujia</h6>
+          <button class="btn btn-sm btn-outline-danger rounded-circle" onclick="removeItem('item1')">❌</button>
+        </div>
+        <div class="d-flex align-items-center mt-2">
+          <label class="me-2">Qty:</label>
+          <select class="form-select form-select-sm w-auto" onchange="updateTotal(this, 21.60)">
+            {% for i in '12345' %}
+              <option value="{{ forloop.counter }}" {% if forloop.first %}selected{% endif %}>{{ forloop.counter }}</option>
+            {% endfor %}
+          </select>
+          <span class="ms-auto fw-bold total-price">₹21.60</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Repeat for other products... -->
+  </div>
+
+  <div class="mt-4 d-grid">
+    <a href="/checkout" class="btn btn-success btn-lg">Proceed to Checkout</a>
+  </div>
+</div>
+    {% block body %}
+
+    {% endblock %}
+    
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script>
+
+//cart   site menu js functionality
+
+function openCart() {
+  document.getElementById("cartDrawer").style.transform = "translateX(0%)";
+  document.getElementById("cartOverlay").style.display = "block";
+  document.body.classList.add('overflow-hidden');  // Prevent scrolling
+}
+
+function closeCart() {
+  document.getElementById("cartDrawer").style.transform = "translateX(100%)";
+  document.getElementById("cartOverlay").style.display = "none";
+  document.body.classList.remove('overflow-hidden');
+}
+
+// toaster 
+      function showToast(message = "✅ Action successful!") {
+        const toastContainer = document.getElementById('toast-container');
+      
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white border-0 show mb-2 shadow rounded bg-success';
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.style.minWidth = "250px";
+      
+        toast.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body fw-medium">
+              ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.remove()"></button>
+          </div>`;
+      
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.remove();
+        }, 2500);
+      }
+      </script>
+      <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;"></div>
+      <script>
+        let cartOpened = false;
+        
+
+  function handleCartClick(button) {
+    if (button.dataset.added === "true") {
+      openCart();
+    } else {
+      showToast("✅ Added to cart successfully!");
+      button.innerText = "View Cart";
+      button.dataset.added = "true";
+    }
+  }
+</script>
+
+        </script>      
+        <script>
+          // Wishlist logic 
+          function toggleWishlist(el) {
+            const icon = el.querySelector('i');
+            const isWishlisted = icon.classList.contains('wishlisted');
+          
+            if (isWishlisted) {
+              icon.classList.remove('wishlisted', 'text-danger', 'bg-danger-subtle');
+              icon.classList.add('text-muted', 'bg-light');
+              showToast("❌ Removed from wishlist");
+            } else {
+              icon.classList.add('wishlisted', 'text-danger', 'bg-danger-subtle');
+              icon.classList.remove('text-muted', 'bg-light');
+              showToast("❤️ Added to wishlist");
+            }
+          }
+          </script>
+          
+        
+  </body>
+</html>

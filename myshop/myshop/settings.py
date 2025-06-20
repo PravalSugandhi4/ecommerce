@@ -124,3 +124,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files (user-uploaded content)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+'django.contrib.messages.context_processors.messages',
+'django.contrib.sessions.middleware.SessionMiddleware',
+'django.contrib.messages.middleware.MessageMiddleware',
+
