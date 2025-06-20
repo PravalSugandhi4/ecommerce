@@ -10,5 +10,7 @@ urlpatterns = [
     path('checkout/', checkout, name='checkout'),
     path('logout/', logoutuser, name='logout'),  
     path('cart/', cart, name='cart'), 
+    path('addtocart/', addtocart, name='addtocart'),
+
     
 ]

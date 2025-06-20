@@ -88,12 +88,12 @@
       <p><strong>Stock:</strong> {{ product.stock }}</p>
 
       <div class="d-flex gap-3 mt-4">
-        <a href="#" class="btn btn-success px-4" onclick="handleCartClick(this)">Add to Cart</a>
+        <a href="{% url 'addtocart' %}" class="btn btn-success px-4" onclick="">Add to Cart</a>
 
 
 
         <!-- Wishlist Icon -->
-        <a href="javascript:void(0);" class="wishlist-btn" onclick="toggleWishlist(this)">
+        <a href="javascript:void(0);" class="wishlist-btn" onclick="">
           <i class="bi bi-heart-fill text-muted bg-light rounded-circle p-2"></i>
         </a>
 

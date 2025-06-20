@@ -36,7 +36,8 @@
           <p class="card-text">{{ i.description|truncatechars:50 }}</p>
           <div class="mt-auto d-flex justify-content-between align-items-center">
             <span class="fw-bold text-success">₹{{ i.price }}</span>
-            <a href="javascript:void(0);" class="btn btn-success px-4" onclick="">Add to Cart</a>
+            <!-- javascript:void(0); -->
+            <a href="{% url 'addtocart'%}" class="btn btn-success px-4" onclick="">Add to Cart</a>
           </div>
         </div>
         </a>

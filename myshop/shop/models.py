@@ -13,10 +13,6 @@ class Banner(models.Model):
         return self.title
 
 
-
-
-
-
 #------------------------------------user register model------------------------------------
 
 

@@ -66,3 +66,13 @@ class WishlistAdmin(admin.ModelAdmin):
 
     search_fields = ['userid__username', 'productid']
     list_filter = ['userid__username']
+#-------------------------------------banner model------------------------------------
+@admin.register(Banner)
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ('bannerid', 'title', 'image')
+    list_editable = ('title',)
+    list_per_page = 10
+    sortable_by = ('bannerid')
+
+    search_fields = ['title']
+    list_filter = ['title']

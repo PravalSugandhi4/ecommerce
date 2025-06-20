@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
@@ -133,23 +132,22 @@ def userwishlist(request):
 
 
 
-@login_required
+
 def checkout(request):
     return render(request,"shop/checkout.html")
 
 
 
-@login_required
+
 def addtowishlist(request):
     pass
 
 
-@login_required
 def removefromwishlist(request):
     pass
 
 
-@login_required
+
 def addtocart(request):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to add items to your cart.")
@@ -157,7 +155,9 @@ def addtocart(request):
     pass
 
 
-@login_required
+
+
+
 def removefromcart(request):
     pass
 
@@ -166,6 +166,7 @@ def removefromcart(request):
 def cart(request):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to view your cart.")
+        return redirect('home')
     return render(request,'shop/cartpage.html')
 
 def logoutuser(request):
