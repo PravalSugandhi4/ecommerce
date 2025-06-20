@@ -162,9 +162,11 @@ def removefromcart(request):
     pass
 
 
-@login_required
+
 def cart(request):
-    pass
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to view your cart.")
+    return render(request,'shop/cartpage.html')
 
 def logoutuser(request):
     logout(request)

@@ -6,6 +6,12 @@ from .models import *
 @admin.register(Categories)
 class CategoriesAdmin(admin.ModelAdmin):
     list_display = ('categoryid', 'name')
+    list_editable = ('name',)
+    list_per_page = 10
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.order_by('name')
+    
 
     search_fields = ['name']
     list_filter = ['name']
@@ -14,7 +20,10 @@ class CategoriesAdmin(admin.ModelAdmin):
 
 @admin.register(Products)
 class ProductsAdmin(admin.ModelAdmin):
-    list_display = ('productid', 'name', 'description', 'productcategory')
+    list_display = ('productid', 'name', 'productcategory', 'price', 'stock')
+    list_editable = ('price', 'stock')
+    list_per_page = 10
+    sortable_by = ('productid')
 
     def productcategory(self, obj):
         return obj.productcategory.name
@@ -27,6 +36,7 @@ class ProductsAdmin(admin.ModelAdmin):
 @admin.register(users)
 class UsersAdmin(admin.ModelAdmin):
     list_display = ('userid', 'get_full_name', 'get_email', 'phone')
+    list_per_page = 10
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -37,7 +47,7 @@ class UsersAdmin(admin.ModelAdmin):
     get_email.short_description = 'Email'
 
     search_fields = ['user__email', 'user__first_name', 'user__last_name', 'phone']
-    list_filter = ['user__is_active']
+    list_filter = ['user__email']
 
 
 
@@ -45,6 +55,10 @@ class UsersAdmin(admin.ModelAdmin):
 @admin.register(wishlist)
 class WishlistAdmin(admin.ModelAdmin):
     list_display = ('wishlistid', 'get_username', 'productid')
+    sortable_by = ('wishlistid')
+    list_per_page = 10
+    
+   
 
     def get_username(self, obj):
         return obj.userid.username

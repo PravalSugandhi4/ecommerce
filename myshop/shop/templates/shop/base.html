@@ -60,7 +60,7 @@
             <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="#" onclick="">Cart</a>
+            <a class="nav-link" href="{% url 'cart'%}" onclick="">Cart</a>
           </li>
 
           {% if request.user.is_authenticated %}
