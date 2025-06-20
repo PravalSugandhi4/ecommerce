@@ -103,8 +103,28 @@ def productdetail(request, myproductid):
 
 
 
-def wishlist(request):
-    return render(request, "shop/wishlist.html")
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import users, wishlist
+
+
+def userwishlist(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to view your wishlist.")
+        return redirect('home')
+    
+    custom_user = users.objects.get(user=request.user)
+    wishlist_items = wishlist.objects.filter(userid=custom_user)
+    products = [item.productid for item in wishlist_items]
+    for product in products:
+        print("Product name:", product.name)
+
+    if not products:
+        messages.info(request, "Your wishlist is empty.")
+    else:
+        messages.success(request, "Here are your wishlist items.")
+
+    return render(request, "shop/wishlist.html", {'products': products})
 
 
 
@@ -131,6 +151,9 @@ def removefromwishlist(request):
 
 @login_required
 def addtocart(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to add items to your cart.")
+        return redirect('home')
     pass
 
 

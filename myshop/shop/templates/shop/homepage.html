@@ -21,11 +21,11 @@
     {% for i in products %}
     <div class="col">
       <div class="card h-100 shadow-sm">
+        <a href="{% url 'productdetail' i.productid %}" class="text-decoration-none text-dark">
         <div style="aspect-ratio: 4/4; overflow: hidden; border-radius: 12px;">
           <img src="{{ i.productimage.url }}" class="card-img-top" alt="{{ i.name }}"
-               style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s;"
-               onmouseover="this.style.transform='scale(1.03)'" 
-               onmouseout="this.style.transform='scale(1)'">
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
         </div>
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">
@@ -36,9 +36,10 @@
           <p class="card-text">{{ i.description|truncatechars:50 }}</p>
           <div class="mt-auto d-flex justify-content-between align-items-center">
             <span class="fw-bold text-success">₹{{ i.price }}</span>
-            <a href="javascript:void(0);" class="btn btn-success px-4" onclick="handleCartClick(this)">Add to Cart</a>
+            <a href="javascript:void(0);" class="btn btn-success px-4" onclick="">Add to Cart</a>
           </div>
         </div>
+        </a>
       </div>
     </div>
     {% endfor %}
@@ -50,16 +51,16 @@
 
 <!-- Show modal if login/signup error exists -->
 {% if messages %}
-  {% for message in messages %}
-    {% if 'login' in message.message|lower or 'password' in message.message|lower or 'email' in message.message|lower %}
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const authModal = new bootstrap.Modal(document.getElementById('authModal'));
-          authModal.show();
-        });
-      </script>
-    {% endif %}
-  {% endfor %}
+{% for message in messages %}
+{% if 'login' in message.message|lower or 'password' in message.message|lower or 'email' in message.message|lower %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const authModal = new bootstrap.Modal(document.getElementById('authModal'));
+    authModal.show();
+  });
+</script>
+{% endif %}
+{% endfor %}
 {% endif %}
 
 {% endblock %}

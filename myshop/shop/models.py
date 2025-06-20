@@ -18,23 +18,6 @@ class users(models.Model):
 
     def __str__(self):
         return self.username
-    
-
-
-
-
-#------------------------------------wishlist model------------------------------------
-    
-class wishlist(models.Model):
-    wishlistid = models.AutoField(primary_key=True)
-    userid = models.ForeignKey(users, on_delete=models.CASCADE)
-    productid = models.IntegerField()
-
-    def __str__(self):
-        return f"Wishlist {self.wishlistid} for User {self.userid.username}"
-
-
-
 
 #------------------------------------categories model------------------------------------
 
@@ -44,7 +27,8 @@ class Categories(models.Model):
     
     def __str__(self):
         return self.name
-    
+
+
 
 
 
@@ -65,5 +49,30 @@ class Products(models.Model):
 
     def __str__(self):
         return f"{self.productid} - {self.name}"
+
+
+
+#------------------------------------wishlist model------------------------------------
+    
+class wishlist(models.Model):
+    wishlistid = models.AutoField(primary_key=True)
+    userid = models.ForeignKey(users, on_delete=models.CASCADE)
+    productid = models.ForeignKey(Products, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.userid.username} "
+
+
+
+
+
+    
+
+
+
+
+
+
+
 
     

@@ -6,7 +6,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', userlogin, name='login'),
     path('product/<int:myproductid>/',productdetail, name='productdetail'),
-    path('wishlist/', wishlist, name='wishlist'),
+    path('wishlist/', userwishlist, name='wishlist'),
     path('checkout/', checkout, name='checkout'),
     path('logout/', logoutuser, name='logout'),   
+    path('addtocart/', addtocart, name='addtocart'),
 ]

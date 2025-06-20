@@ -1,6 +1,47 @@
 {% extends 'shop/base.html' %}
 {% load static %}
-
 {% block body %}
-<h1>Wishlist</h1>
+
+
+  {% if products %}
+  <div class="container mt-5">
+    <h3 class="text-success fw-bold mb-4 text-center">
+      <i class="bi bi-heart-fill me-2"></i>Your Wishlist
+    </h3>
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="card shadow-sm rounded-4 h-100">
+          <img src="{{ product.productimage.url }}" 
+               class="card-img-top img-fluid rounded-top"
+               alt="{{ product.name }}"
+               style="height: 230px; object-fit: cover; transition: transform 0.2s ease-in-out;"
+               onmouseover="this.style.transform='scale(1.03)'"
+               onmouseout="this.style.transform='scale(1)'">
+
+          <div class="card-body">
+            <h5 class="card-title text-success fw-semibold">{{ product.name }}</h5>
+            <p class="card-text mb-2">Price: ₹{{ product.price }}</p>
+            <div class="d-flex justify-content-between">
+              <a href="#" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash"></i> Remove
+              </a>
+              <a href="{% url 'productdetail' product.productid %}" class="btn btn-outline-success btn-sm">
+                <i class="bi bi-eye"></i> View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+    <div class="text-center mt-5">
+      <img src="{% static 'store/media/nowishlist.png' %}" alt="Empty" width="300"  class="mb-2 mt-5">
+      <h5 class="text-muted"></h5>
+      <a href="{% url 'home' %}" class="btn btn-outline-success mt-3">Start Shopping</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}
