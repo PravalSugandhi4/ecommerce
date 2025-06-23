@@ -72,13 +72,9 @@ def userlogin(request):
         else:
             messages.error(request, "Invalid credentials")
             return redirect('home')  # ✅ Triggers modal via JS logic
+        
 
     return redirect('home')
-
-
-
-
-
 
 
 
@@ -92,9 +88,22 @@ def home(request):
 
 
 
+
 def productdetail(request, myproductid):  
     product = Products.objects.get(productid=myproductid)
-    return render(request, 'shop/productdetail.html', {'product': product})
+    is_in_wishlist = False
+
+    if request.user.is_authenticated:
+        is_in_wishlist = wishlist.objects.filter(
+            userid__user=request.user,
+            productid=product
+        ).exists()
+
+    return render(request, 'shop/productdetail.html', {
+        'product': product,
+        'is_in_wishlist': is_in_wishlist
+    })
+
 
 
 
@@ -139,12 +148,33 @@ def checkout(request):
 
 
 
-def addtowishlist(request):
-    pass
+from django.http import HttpResponse
+
+def addtowishlist(request, productid):
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to add items to your wishlist.")
+        return redirect('home')
+    current_user = users.objects.get(user=request.user)
+    product = Products.objects.get(productid=productid)
+
+    if wishlist.objects.filter(userid=current_user, productid=product).exists():
+        messages.info(request, "Already in wishlist")
+    else:
+        wishlist.objects.create(userid=current_user, productid=product)
+        messages.success(request, "Item added to wishlist")
+    return redirect('productdetail', myproductid=productid)
 
 
-def removefromwishlist(request):
-    pass
+def removefromwishlist(request,productid):
+        current_user = users.objects.get(user=request.user)
+        product = Products.objects.get(productid=productid)
+        wishlist_item = wishlist.objects.filter(userid=current_user, productid=product)
+        if wishlist_item.exists():
+            wishlist_item.delete()
+            messages.success(request, "Item removed from wishlist")
+        else:
+            messages.error(request, "Item not found in wishlist")
+        return redirect('wishlist')
 
 
 

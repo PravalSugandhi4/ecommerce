@@ -93,9 +93,22 @@
 
 
         <!-- Wishlist Icon -->
-        <a href="javascript:void(0);" class="wishlist-btn" onclick="">
-          <i class="bi bi-heart-fill text-muted bg-light rounded-circle p-2"></i>
+        <a href="{% url 'addtowishlist' product.productid %}" class="wishlist-btn">
+          <i class="bi 
+                    {% if is_in_wishlist %}
+                      bi-heart-fill text-danger
+                    {% else %}
+                      bi-heart text-muted
+                    {% endif %}
+                    bg-light rounded-circle p-2"
+             style="transition: transform 0.2s;"
+             onmouseover="this.style.transform='scale(1.2)'"
+             onmouseout="this.style.transform='scale(1)'">
+          </i>
         </a>
+        
+      
+
 
 
 

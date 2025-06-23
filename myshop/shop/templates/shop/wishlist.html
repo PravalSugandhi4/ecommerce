@@ -23,7 +23,7 @@
             <h5 class="card-title text-success fw-semibold">{{ product.name }}</h5>
             <p class="card-text mb-2">Price: ₹{{ product.price }}</p>
             <div class="d-flex justify-content-between">
-              <a href="#" class="btn btn-outline-danger btn-sm">
+              <a href="{% url 'removefromwishlist' product.productid %}" class="btn btn-outline-danger btn-sm">
                 <i class="bi bi-trash"></i> Remove
               </a>
               <a href="{% url 'productdetail' product.productid %}" class="btn btn-outline-success btn-sm">
@@ -44,4 +44,9 @@
     </div>
   {% endif %}
 </div>
+<script>
+
+
+  
+</script>
 {% endblock %}
