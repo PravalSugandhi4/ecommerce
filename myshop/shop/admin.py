@@ -76,3 +76,4 @@ class BannerAdmin(admin.ModelAdmin):
 
     search_fields = ['title']
     list_filter = ['title']
+#------------------------------------order model------------------------------------

@@ -81,7 +81,10 @@ def userlogin(request):
 
 def home(request):
     products = Products.objects.all()
-    return render(request, 'shop/homepage.html', {'products': products})
+    banners = Banner.objects.all()
+    return render(request, 'shop/homepage.html', {'banners': banners,'products': products})
+
+  
 
 
 
@@ -148,7 +151,7 @@ def checkout(request):
 
 
 
-from django.http import HttpResponse
+
 
 def addtowishlist(request, productid):
     if not request.user.is_authenticated:
@@ -182,7 +185,11 @@ def addtocart(request):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to add items to your cart.")
         return redirect('home')
-    pass
+    messages.success(request, "Add to cart functionality not implemented ")
+    return redirect('home')  # Redirect to home or wherever appropriate
+    
+
+
 
 
 
@@ -197,7 +204,9 @@ def cart(request):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to view your cart.")
         return redirect('home')
+    messages.success(request, "Add to cart functionality not implemented ")
     return render(request,'shop/cartpage.html')
+
 
 def logoutuser(request):
     logout(request)
