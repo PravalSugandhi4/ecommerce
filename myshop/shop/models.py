@@ -105,12 +105,16 @@ class OrderItem(models.Model):
         return f"{self.orderid.orderid} - {self.productid.name} ({self.quantity})"
     
 #-----------------------------place order-------------------------------------------------
-class Placeorder(models.Model):
-    name=models.CharField(max_length=100)
-    address=models.CharField(max_length=300)
-    phonenumber=models.CharField(max_length=10)
-    ordertime=models.DateTimeField(auto_now_add=True)
-    orders=models.ForeignKey(Order, on_delete=models.CASCADE)
+from django.utils import timezone
+
+class PlaceOrder(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=300)
+    phonenumber = models.CharField(max_length=10)
+    ordertime = models.DateTimeField(auto_now_add=True)
+    orders = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+
 
 
 

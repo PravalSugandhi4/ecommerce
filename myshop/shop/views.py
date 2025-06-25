@@ -66,14 +66,16 @@ def userlogin(request):
 
 
 def home(request):
-    current_user = users.objects.get(user=request.user)
     products = Products.objects.all()
-    
     banners = Banner.objects.all()
+    if not request.user.is_authenticated:
+        return render(request, 'shop/homepage.html',{'banners': banners,'products': products})
+
+   
+    current_user = users.objects.get(user=request.user)
     stockproducts = [product for product in products if product.stock <=0]
     cart_product_ids = []
     cart_product_ids = cart.objects.filter(userid=current_user).values_list('productid__productid', flat=True)
-    
     return render(request, 'shop/homepage.html', {'banners': banners,'products': products, 'stockproducts': stockproducts,'cart_product_ids': list(cart_product_ids)})
 
 
@@ -256,7 +258,17 @@ def checkout(request):
     })
     
 
-# def placeorder(request):
+def placeorder(request):
+    if not request.user.is_authenticated:
+        messages("You need to login again")
+        return redirect('login')
+    if request.method=='POST':    
+        name=request.POST.get('fullname')
+        address=request.POST.get('address')
+        phonenumber=request.POST.get('phone')
+        print(name)
+        
+    return redirect('home')
 
 
 def logoutuser(request):

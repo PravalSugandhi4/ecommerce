@@ -115,9 +115,14 @@ class OrderItemAdmin(admin.ModelAdmin):
     search_fields = ['orderid__orderid', 'productid__name']
     list_filter = ['orderid__order_date']
 #---------------------place order model-----------------------------------------
-@admin.register(Placeorder)
-class Placeorderadmin(admin.ModelAdmin):
-    list_display=('name','address','phonenumber','ordertime','orders')
-    sortable_by = ('ordertime')
-    list_per_page=10
-    list_filter=('ordertime','name')
+@admin.register(PlaceOrder)
+class PlaceOrderAdmin(admin.ModelAdmin):
+    list_display = ('name', 'address', 'phonenumber', 'ordertime', 'orders')
+    list_display_links = ('name',)  # 'name' is in list_display
+    list_filter = ('ordertime', 'name')
+    ordering = ('-ordertime',)
+    list_per_page = 20
+
+    
+
+  
