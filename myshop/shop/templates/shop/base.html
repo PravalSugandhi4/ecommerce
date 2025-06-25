@@ -35,6 +35,10 @@
     body.modal-open {
       overflow: hidden;
     }
+    .card-img-top {
+  border-radius: 12px;
+}
+
   </style>
 </head>
 
@@ -61,7 +65,7 @@
             <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="{% url 'cart'%}" onclick="">Cart</a>
+            <a class="nav-link" href="{% url 'viewcart'%}" onclick="">Cart</a>
           </li>
 
           {% if request.user.is_authenticated %}

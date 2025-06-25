@@ -65,19 +65,36 @@
 </style>  
 
 </style>
-
 <div class="container my-5">
   <div class="row g-5 align-items-start">
 
     <!-- Image Section -->
-    <div style="flex: 1; max-width: 500px; overflow: hidden; border-radius: 10px;">
+    <div class="position-relative" style="flex: 1; max-width: 500px; overflow: hidden; border-radius: 10px;">
+
+      {% if product.stock <= 0 %}
+        <!-- Black Overlay -->
+        <div style="
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+          z-index: 1;
+          border-radius: 10px;">
+        </div>
+
+        <!-- Out of Stock Badge -->
+        <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-3 py-2 fs-6" style="z-index: 2;">
+          Out of Stock
+        </span>
+      {% endif %}
+
+      <!-- Product Image -->
       <img src="{{ product.productimage.url }}"
            alt="{{ product.name }}"
-           style="width: 100%; height: 500px; object-fit: cover; transition: transform 0.3s ease-in-out; border-radius: 8px;"
+           class="w-100"
+           style="height: 500px; object-fit: cover; border-radius: 10px; transition: transform 0.3s ease-in-out; position: relative; z-index: 0;"
            onmouseover="this.style.transform='scale(1.1)'"
            onmouseout="this.style.transform='scale(1)'">
     </div>
-    
 
     <!-- Product Info -->
     <div class="col-md-7">
@@ -87,10 +104,14 @@
       <h4 class="text-success fw-semibold mt-3">₹{{ product.price }}</h4>
       <p><strong>Stock:</strong> {{ product.stock }}</p>
 
-      <div class="d-flex gap-3 mt-4">
-        <a href="{% url 'addtocart' %}" class="btn btn-success px-4" onclick="">Add to Cart</a>
+      <!-- Action Buttons -->
+      <div class="d-flex align-items-center gap-3 mt-4 flex-wrap">
 
-
+        {% if product.stock > 0 %}
+          <a href="{% url 'addtocart' product.productid %}" class="btn btn-success px-4">Add to Cart</a>
+        {% else %}
+          <button class="btn btn-secondary px-4" disabled>Out of Stock</button>
+        {% endif %}
 
         <!-- Wishlist Icon -->
         <a href="{% url 'addtowishlist' product.productid %}" class="wishlist-btn">
@@ -106,17 +127,11 @@
              onmouseout="this.style.transform='scale(1)'">
           </i>
         </a>
-        
-      
-
-
-
-
 
       </div>
     </div>
-
   </div>
 </div>
+
 
 {% endblock %}

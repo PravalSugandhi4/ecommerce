@@ -70,10 +70,47 @@ class WishlistAdmin(admin.ModelAdmin):
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
     list_display = ('bannerid', 'title', 'image')
-    list_editable = ('title',)
+    list_editable = ('title',) 
     list_per_page = 10
     sortable_by = ('bannerid')
 
     search_fields = ['title']
     list_filter = ['title']
+#------------------------------------cart model------------------------------------
+@admin.register(cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('cartid', 'get_username', 'productid', 'quantity')
+    sortable_by = ('cartid')
+    list_per_page = 10
+
+    def get_username(self, obj):
+        return obj.userid.username
+    get_username.short_description = 'Username'
+
+    search_fields = ['userid__username', 'productid__name']
+    list_filter = ['userid__username']
 #------------------------------------order model------------------------------------
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('orderid', 'get_username', 'totalbillamount', 'order_date')
+    search_fields = ['userid__username']
+    list_per_page = 10
+    list_filter = ['order_date']
+
+    def get_username(self, obj):
+        return obj.userid.username
+    get_username.short_description = 'Username'
+
+#------------------------------------order item model------------------------------------
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):     
+    list_display = ('orderitemid', 'get_orderid', 'productid', 'quantity', 'price')
+    sortable_by = ('orderitemid')
+    list_per_page = 10
+
+    def get_orderid(self, obj):
+        return obj.orderid.orderid
+    get_orderid.short_description = 'Order ID'
+
+    search_fields = ['orderid__orderid', 'productid__name']
+    list_filter = ['orderid__order_date']

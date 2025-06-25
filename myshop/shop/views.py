@@ -80,9 +80,13 @@ def userlogin(request):
 
 
 def home(request):
+    current_user = users.objects.get(user=request.user)
     products = Products.objects.all()
+    cart_product_ids = cart.objects.filter(userid=current_user).values_list('productid__productid', flat=True)
     banners = Banner.objects.all()
-    return render(request, 'shop/homepage.html', {'banners': banners,'products': products})
+    stockproducts = [product for product in products if product.stock <=0]
+    cart_product_ids = []
+    return render(request, 'shop/homepage.html', {'banners': banners,'products': products, 'stockproducts': stockproducts,'cart_product_ids': list(cart_product_ids)})
 
   
 
@@ -93,30 +97,32 @@ def home(request):
 
 
 def productdetail(request, myproductid):  
+    cart_product_ids = []
     product = Products.objects.get(productid=myproductid)
+    products = Products.objects.all()
+    stockproducts = [product for product in products if product.stock <=0]
     is_in_wishlist = False
 
     if request.user.is_authenticated:
+
+        current_user = users.objects.get(user=request.user)
+        cart_product_ids = cart.objects.filter(userid=current_user).values_list('productid__productid', flat=True)
         is_in_wishlist = wishlist.objects.filter(
             userid__user=request.user,
             productid=product
         ).exists()
 
+
+
     return render(request, 'shop/productdetail.html', {
         'product': product,
-        'is_in_wishlist': is_in_wishlist
+        'is_in_wishlist': is_in_wishlist,
+        'stockproducts': stockproducts,
+        'cart_product_ids': list(cart_product_ids)
+
     })
 
 
-
-
-
-
-
-
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import users, wishlist
 
 
 def userwishlist(request):
@@ -181,11 +187,20 @@ def removefromwishlist(request,productid):
 
 
 
-def addtocart(request):
+def addtocart(request,productaddtocart):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to add items to your cart.")
         return redirect('home')
-    messages.success(request, "Add to cart functionality not implemented ")
+    # Implement the logic to add items to the cart
+    current_user = users.objects.get(user=request.user)
+    product = Products.objects.get(productid=productaddtocart)
+    # Check if the product is already in the cart
+    if cart.objects.filter(userid=current_user, productid=product).exists():
+        messages.info(request, "Item already in cart")
+    else:
+        # Create a new cart item
+        cart.objects.create(userid=current_user, productid=product, quantity=1)
+        messages.success(request, "Item added to cart")    
     return redirect('home')  # Redirect to home or wherever appropriate
     
 
@@ -200,12 +215,23 @@ def removefromcart(request):
 
 
 
-def cart(request):
+def viewcart(request):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to view your cart.")
         return redirect('home')
-    messages.success(request, "Add to cart functionality not implemented ")
-    return render(request,'shop/cartpage.html')
+    current_user = users.objects.get(user=request.user)
+    cartitems = cart.objects.filter(userid=current_user)
+    products = [item.productid for item in cartitems]
+    if not products:
+        messages.info(request, "Your cart is empty.")
+    else:
+        messages.success(request, "Here are your cart items.")
+        print(cartitems)
+    return render(request,'shop/cartpage.html', {'products': products, 'cartitems': cartitems})
+
+def updatecart(request):
+    pass
+    
 
 
 def logoutuser(request):
