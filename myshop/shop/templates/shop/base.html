@@ -13,17 +13,38 @@
 
   {% block extra_css %}{% endblock %}
 
+
+  <style>
+    /* Chrome, Safari, Edge, Opera */
+    input[type=number].no-spinner::-webkit-inner-spin-button,
+    input[type=number].no-spinner::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number].no-spinner {
+      -moz-appearance: textfield;
+    }
+
+    /* Optional fix for newer Edge/Chrome */
+    input.no-spinner {
+      appearance: textfield;
+    }
+  </style>
+
+
   <style>
     .card-title {
       font-size: 1.1rem;
     }
+
     .card-text {
       font-size: 0.9rem;
     }
   </style>
-  
+
   <style>
-    
     .toast-container {
       z-index: 9999;
     }
@@ -35,10 +56,10 @@
     body.modal-open {
       overflow: hidden;
     }
-    .card-img-top {
-  border-radius: 12px;
-}
 
+    .card-img-top {
+      border-radius: 12px;
+    }
   </style>
 </head>
 

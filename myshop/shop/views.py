@@ -11,9 +11,6 @@ from django.contrib.auth import logout
 #------------------------------------user register view------------------------------------
 
 
-from django.contrib.auth.models import User
-from django.contrib.auth import login
-from .models import users  # your custom model
 def register(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -50,15 +47,6 @@ def register(request):
     return redirect('home')
 
 
-
-
-
-
-
-
-
-
-
 def userlogin(request):
     if request.method == 'POST':
         email = request.POST.get('email').lower()
@@ -77,23 +65,16 @@ def userlogin(request):
     return redirect('home')
 
 
-
-
 def home(request):
     current_user = users.objects.get(user=request.user)
     products = Products.objects.all()
-    cart_product_ids = cart.objects.filter(userid=current_user).values_list('productid__productid', flat=True)
+    
     banners = Banner.objects.all()
     stockproducts = [product for product in products if product.stock <=0]
     cart_product_ids = []
+    cart_product_ids = cart.objects.filter(userid=current_user).values_list('productid__productid', flat=True)
+    
     return render(request, 'shop/homepage.html', {'banners': banners,'products': products, 'stockproducts': stockproducts,'cart_product_ids': list(cart_product_ids)})
-
-  
-
-
-
-
-
 
 
 def productdetail(request, myproductid):  
@@ -123,8 +104,6 @@ def productdetail(request, myproductid):
     })
 
 
-
-
 def userwishlist(request):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to view your wishlist.")
@@ -133,8 +112,7 @@ def userwishlist(request):
     custom_user = users.objects.get(user=request.user)
     wishlist_items = wishlist.objects.filter(userid=custom_user)
     products = [item.productid for item in wishlist_items]
-    for product in products:
-        print("Product name:", product.name)
+
 
     if not products:
         messages.info(request, "Your wishlist is empty.")
@@ -142,21 +120,6 @@ def userwishlist(request):
         messages.success(request, "Here are your wishlist items.")
 
     return render(request, "shop/wishlist.html", {'products': products})
-
-
-
-
-
-
-
-
-
-def checkout(request):
-    return render(request,"shop/checkout.html")
-
-
-
-
 
 
 def addtowishlist(request, productid):
@@ -186,7 +149,6 @@ def removefromwishlist(request,productid):
         return redirect('wishlist')
 
 
-
 def addtocart(request,productaddtocart):
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to add items to your cart.")
@@ -197,41 +159,104 @@ def addtocart(request,productaddtocart):
     # Check if the product is already in the cart
     if cart.objects.filter(userid=current_user, productid=product).exists():
         messages.info(request, "Item already in cart")
+        return redirect('viewcart')  # Redirect to view cart or wherever appropriate
     else:
         # Create a new cart item
         cart.objects.create(userid=current_user, productid=product, quantity=1)
         messages.success(request, "Item added to cart")    
-    return redirect('home')  # Redirect to home or wherever appropriate
+        return redirect('home')  # Redirect to home or wherever appropriate
     
 
+def removefromcart(request, productid):
 
-
-
-
-
-
-def removefromcart(request):
-    pass
-
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to remove items from your cart.")
+        return redirect('home')
+    # Implement the logic to remove items from the cart
+    current_user = users.objects.get(user=request.user)
+    product = Products.objects.get(productid=productid)
+    try:
+        cart_item = cart.objects.get(userid=current_user, productid=product)
+        cart_item.delete()
+        messages.success(request, "Item removed from cart")
+    except cart.DoesNotExist:
+        messages.error(request, "Item not found in cart")
+    return redirect('viewcart')  # Redirect to view cart or wherever appropriate
+    #   
 
 
 def viewcart(request):
+
     if not request.user.is_authenticated:
         messages.error(request, "You need to be logged in to view your cart.")
         return redirect('home')
     current_user = users.objects.get(user=request.user)
     cartitems = cart.objects.filter(userid=current_user)
     products = [item.productid for item in cartitems]
+    total_items=0
+    subtotal=0
     if not products:
         messages.info(request, "Your cart is empty.")
+        total_items=0
+        subtotal=0
     else:
         messages.success(request, "Here are your cart items.")
-        print(cartitems)
-    return render(request,'shop/cartpage.html', {'products': products, 'cartitems': cartitems})
+        total_items = sum(item.quantity for item in cartitems)
+        subtotal = sum(item.quantity * item.productid.price for item in cartitems)
+       
+    return render(request,'shop/cartpage.html', {'products': products, 'cartitems': cartitems,'total_items':total_items,'subtotal':subtotal})
 
-def updatecart(request):
-    pass
+
+def updatecart(request, productid):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to update your cart.")
+        return redirect('login')  # Consider redirecting to login
+
+    if request.method == "POST":
+        try:
+            current_user = users.objects.get(user=request.user)
+            product = Products.objects.get(productid=productid)
+            cart_item = cart.objects.get(userid=current_user, productid=product)
+
+            new_quantity = int(request.POST.get('quantity', 1))
+
+            if new_quantity <= 0:
+                cart_item.delete()
+                messages.success(request, "Item removed from cart.")
+            else:
+                cart_item.quantity = min(new_quantity, 5)  # Optional: cap at 5
+                messages.success(request, "Item quantity updated.")
+                cart_item.save()
+                
+                
+        except (cart.DoesNotExist, Products.DoesNotExist):
+            messages.error(request, "Item not found in cart.")
+
+    return redirect('viewcart')
+
+
     
+def checkout(request):
+    current_user = users.objects.get(user=request.user)
+    cartitems = cart.objects.filter(userid=current_user)
+
+    if not cartitems:
+        messages.error(request, "Your cart is empty.")
+        return redirect('viewcart')
+
+    subtotal = sum(item.productid.price * item.quantity for item in cartitems)
+    deliverytax=150
+    totalbillamount=subtotal+deliverytax
+
+    return render(request, 'shop/checkout.html', {
+        'cartitems': cartitems,
+        'subtotal': subtotal,
+        'deliverytax':deliverytax,
+        'totalbillamount':totalbillamount
+    })
+    
+
+# def placeorder(request):
 
 
 def logoutuser(request):

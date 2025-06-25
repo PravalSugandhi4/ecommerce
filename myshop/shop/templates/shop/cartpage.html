@@ -1,6 +1,11 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+
 {% block body %}
+
+
+
+
 
 <div class="container mt-5">
   <h3 class="text-success mb-4">🛒 Your Cart</h3>
@@ -22,17 +27,20 @@
 
           <!-- Quantity and Remove -->
           <div class="d-flex align-items-center">
-            <form method="POST" action="/" class="d-flex">
+            <form method="POST" action="{% url 'updatecart' item.productid.productid %}"
+              class="d-flex align-items-center">
               {% csrf_token %}
-              <div class="input-group input-group-sm" style="width: 120px;">
+              <div class="input-group input-group-sm" style="width: 130px;">
                 <button class="btn btn-outline-secondary" type="button" onclick="decreaseQty(this)">−</button>
-                <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
-                  class="form-control text-center" style="max-width: 50px;">
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="5"
+                  class="form-control text-center no-spinner" style="max-width: 50px;">
+
                 <button class="btn btn-outline-secondary" type="button" onclick="increaseQty(this)">+</button>
               </div>
-              <button type="submit" class="btn btn-outline-success btn-sm">Update</button>
+              <button class="btn btn-outline-success btn-sm ms-2" type="submit">Update</button>
             </form>
-            <a href="/" class="btn btn-outline-danger btn-sm ms-3">
+
+            <a href="{% url 'removefromcart' item.productid.productid %}" class="btn btn-outline-danger btn-sm ms-3">
               <i class="bi bi-trash"></i>
             </a>
           </div>
@@ -41,6 +49,7 @@
       </div>
     </div>
 
+    
 
     <!-- Cart Summary -->
     <div class="col-md-4">
@@ -48,7 +57,7 @@
         <div class="card-body">
           <h5 class="card-title text-success">Cart Summary</h5>
           <p class="mb-2">Total Items: <strong>{{ total_items }}</strong></p>
-          <p class="mb-2">Total Price: <strong>₹{{ total_price }}</strong></p>
+          <p class="mb-2">Total Price: <strong>₹{{ subtotal }}</strong></p>
           <a href="{% url 'checkout' %}" class="btn btn-success w-100 mt-3">Proceed to Checkout</a>
         </div>
       </div>
@@ -66,15 +75,25 @@
 <script>
   function increaseQty(button) {
     const input = button.parentElement.querySelector('input[type="number"]');
-    input.value = parseInt(input.value) + 1;
+    let currentValue = parseInt(input.value) || 1;
+
+    if (currentValue < 5) {
+      input.value = currentValue + 1;
+    } else {
+      alert("You can only add up to 5 quantity of this product.");
+    }
   }
 
   function decreaseQty(button) {
     const input = button.parentElement.querySelector('input[type="number"]');
-    if (parseInt(input.value) > 1) {
-      input.value = parseInt(input.value) - 1;
+    let currentValue = parseInt(input.value) || 1;
+
+    if (currentValue > 1) {
+      input.value = currentValue - 1;
     }
   }
 </script>
+
+
 
 {% endblock %}
