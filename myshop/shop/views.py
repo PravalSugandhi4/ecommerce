@@ -9,6 +9,20 @@ from django.contrib.auth import logout
 
 
 #------------------------------------user register view------------------------------------
+def index(request):
+    products = Products.objects.all()
+    banners = Banner.objects.all()
+    if not request.user.is_authenticated:
+        return render(request, 'shop/index.html',{'banners': banners,'products': products})
+
+   
+    current_user = users.objects.get(user=request.user)
+    stockproducts = [product for product in products if product.stock <=0]
+    cart_product_ids = []
+    cart_product_ids = cart.objects.filter(userid=current_user).values_list('productid__productid', flat=True)
+    return render(request, 'shop/index.html', {'banners': banners,'products': products, 'stockproducts': stockproducts,'cart_product_ids': list(cart_product_ids)})
+
+
 
 
 def register(request):
