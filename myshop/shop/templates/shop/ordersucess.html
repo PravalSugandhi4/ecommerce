@@ -1,0 +1,20 @@
+
+{% extends 'shop/base.html' %}
+{% block body %}
+
+<div class="container mt-5 text-center">
+    <div class="alert alert-success">
+        <h2 class="mb-3">✅ Order Placed Successfully!</h2>
+        <p>Thank you for shopping with us.</p>
+        <hr>
+        <h5>🧾 Order ID: <strong>#{{ order.orderid }}</strong></h5>
+        <h5>💵 Total Amount: ₹{{ total }}</h5>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'home' %}" class="btn btn-primary me-2">Continue Shopping</a>
+        <a href="{% url 'pastorders' %}" class="btn btn-outline-secondary">View My Orders</a>
+    </div>
+</div>
+{% endblock %}
+

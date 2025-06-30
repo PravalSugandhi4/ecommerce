@@ -106,7 +106,6 @@ class OrderItem(models.Model):
         return f"{self.orderid.orderid} - {self.productid.name} ({self.quantity})"
     
 #-----------------------------place order-------------------------------------------------
-from django.utils import timezone
 
 class PlaceOrder(models.Model):
     name = models.CharField(max_length=100)

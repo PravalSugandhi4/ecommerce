@@ -1,0 +1,17 @@
+{% extends 'shop/base.html' %}
+{% block body %}
+<div class="container mt-5 text-center">
+    <h2 class="text-danger">❌ Order Failed</h2>
+    <p>{{ message }}</p>
+
+    <ul class="list-group mt-4">
+        {% for item in insufficient_items %}
+            <li class="list-group-item text-danger">
+                {{ item.name }} — Requested: {{ item.requested }}, Available: {{ item.available }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'viewcart' %}" class="btn btn-warning mt-4">Go Back to Cart</a>
+</div>
+{% endblock %}

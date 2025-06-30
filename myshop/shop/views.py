@@ -273,19 +273,110 @@ def checkout(request):
     
 
 def placeorder(request):
+    from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.db import transaction
+from .models import cart, Order, OrderItem, PlaceOrder, Products, users
+
+
+@transaction.atomic
+def placeorder(request):
     if not request.user.is_authenticated:
-        messages("You need to login again")
-        return redirect('login')
-    if request.method=='POST':    
-        name=request.POST.get('fullname')
-        address=request.POST.get('address')
-        phonenumber=request.POST.get('phone')
-        print(name)
-        
-    return redirect('home')
+        messages.warning(request, "You need to login first.")
+        return redirect('home')
+
+    try:
+        user_profile = users.objects.get(user=request.user)
+    except users.DoesNotExist:
+        messages.error(request, "User profile not found.")
+        return redirect('home')
+
+    if request.method == 'POST':
+        cartitems = cart.objects.filter(userid=user_profile)
+
+        if not cartitems.exists():
+            return render(request, 'shop/orderfail.html', {
+                'message': "⚠️ Your cart is empty. Cannot place an order."
+            })
+
+        name = request.POST.get('fullname')
+        address = request.POST.get('address')
+        phonenumber = request.POST.get('phone')
+
+              # Check stock for all items
+        insufficient_stock_items = []
+        for item in cartitems:
+            if item.quantity > item.productid.stock:
+                insufficient_stock_items.append({
+                    'name': item.productid.name,
+                    'available': item.productid.stock,
+                    'requested': item.quantity
+                })
+
+        if insufficient_stock_items:
+            return render(request, 'shop/orderfail.html', {
+                'message': "Some products are out of stock.",
+                'insufficient_items': insufficient_stock_items
+            })
+
+           
+
+        # Create order and items
+        total_amount = sum(item.quantity * item.productid.price for item in cartitems)
+        order = Order.objects.create(userid=user_profile, totalbillamount=total_amount)
+
+        for item in cartitems:
+            OrderItem.objects.create(
+                orderid=order,
+                productid=item.productid,
+                quantity=item.quantity,
+                price=item.productid.price
+            )
+            item.productid.stock -= item.quantity
+            item.productid.save()
+
+        PlaceOrder.objects.create(
+            name=name,
+            address=address,
+            phonenumber=phonenumber,
+            orders=order
+        )
+
+        cartitems.delete()
+
+        return render(request, 'shop/ordersucess.html', {'order': order,'total': total_amount})
+
+    return redirect('viewcart')
+
+
 
 
 def logoutuser(request):
     logout(request)
     messages.success(request, "Logged out successfully")
     return redirect('home')
+
+
+def pastorders(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
+
+    try:
+        user_profile = users.objects.get(user=request.user)
+    except users.DoesNotExist:
+        return redirect('home')
+
+    orders = Order.objects.filter(userid=user_profile).order_by('-order_date')
+
+    # Prepare a list of orders with their items
+    order_data = []
+    for order in orders:
+        items = OrderItem.objects.filter(orderid=order)
+        order_data.append({
+            'order': order,
+            'items': items
+        })
+
+    return render(request, 'shop/orderhistory.html', {
+        'order_data': order_data
+    })

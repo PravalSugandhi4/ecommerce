@@ -36,8 +36,8 @@
           <div class="tab-pane fade show active" id="login" role="tabpanel">
             <form method="post" action="{% url 'login' %}">
               {% csrf_token %}
-              <input name="email" type="email" class="form-control mb-3 rounded-3" placeholder="Email" required>
-              <input name="password" type="password" class="form-control mb-3 rounded-3" placeholder="Password"
+              <input name="email" type="email" class="form-control mb-3 rounded-3" placeholder="demo@gmail.com" required>
+              <input name="password" type="password" class="form-control mb-3 rounded-3" placeholder="1234"
                 required>
               <button type="submit" class="btn btn-success w-100 rounded-3">Login</button>
             </form>

@@ -1,0 +1,32 @@
+{% extends 'shop/base.html' %}
+{% block body %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">📦 My Order History</h2>
+
+    {% if order_data %}
+        {% for entry in order_data %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>Order #{{ entry.order.orderid }}</strong> — {{ entry.order.order_date }}
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for item in entry.items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ item.productid.name }}
+                            <span>Qty: {{ item.quantity }} | ₹{{ item.price }}</span>
+                        </li>
+                    {% endfor %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                        <strong>Total Paid:</strong>
+                        <strong>₹{{ entry.order.totalbillamount }}</strong>
+                    </li>
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">No orders</div>
+    {% endif %}
+</div>
+
+{% endblock %}

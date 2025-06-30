@@ -15,6 +15,8 @@
 
 
   <style>
+   
+
     /* Chrome, Safari, Edge, Opera */
     input[type=number].no-spinner::-webkit-inner-spin-button,
     input[type=number].no-spinner::-webkit-outer-spin-button {
@@ -68,7 +70,7 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
-      <a class="navbar-brand fw-bold text-success" href="{% url 'home' %}">GreenCart</a>
+      <a class="navbar-brand fw-bold text-success" href="{% url 'home' %}">IndoriBazaar</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -95,7 +97,7 @@
               Account
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Orders</a></li>
+              <li><a class="dropdown-item" href="{% url 'pastorders' %}">MyOrders</a></li>
               <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
             </ul>
           </li>
